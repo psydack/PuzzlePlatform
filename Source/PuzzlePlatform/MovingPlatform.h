@@ -7,7 +7,7 @@
 #include "MovingPlatform.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class PUZZLEPLATFORM_API AMovingPlatform : public AStaticMeshActor
@@ -16,10 +16,13 @@ class PUZZLEPLATFORM_API AMovingPlatform : public AStaticMeshActor
 
 public:
 	AMovingPlatform();
-	
+
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 
 	UPROPERTY(EditAnywhere)
-	float MoveSpeed = 20;
+		float MoveSpeed = 20;
+
+	UPROPERTY(EditAnywhere, Meta = (MakeEditWidget = true))
+		FVector TargetLocation;
 };
