@@ -3,9 +3,18 @@
 
 #include "MainMenu.h"
 #include "Components/Button.h"
+#include "ServerRow.h"
 #include "Components/WidgetSwitcher.h"
 #include "Components/EditableTextBox.h"
 #include "Kismet/KismetSystemLibrary.h"
+
+UMainMenu::UMainMenu(const FObjectInitializer& ObjectInitializer)
+{
+	ConstructorHelpers::FClassFinder<UUserWidget> ServerRowBPClass(TEXT("/Game/MenuSystem/WBP_ServerRow"));
+	if (!ensure(ServerRowBPClass.Class != nullptr)) return;
+
+	ServerRowClass = ServerRowBPClass.Class;
+}
 
 bool UMainMenu::Initialize()
 {
@@ -42,9 +51,12 @@ void UMainMenu::JoinServer()
 {
 	if (MenuInterface != nullptr)
 	{
-		if (!ensure(IPText != nullptr)) return;
-		const FString& Address = IPText->GetText().ToString();
-		MenuInterface->Join(Address);
+		UWorld* World = this->GetWorld();
+		UServerRow* Row = CreateWidget<UServerRow>(World, ServerRowClass);
+		if (!ensure(Row != nullptr)) return;
+
+		if (!ensure(ServerList != nullptr)) return;
+		ServerList->AddChild(Row);
 	}
 }
 
