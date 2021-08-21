@@ -3,10 +3,12 @@
 
 #include "MainMenu.h"
 #include "Components/Button.h"
-#include "ServerRow.h"
 #include "Components/WidgetSwitcher.h"
 #include "Components/EditableTextBox.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Components/TextBlock.h"
+
+#include "ServerRow.h"
 
 UMainMenu::UMainMenu(const FObjectInitializer& ObjectInitializer)
 {
@@ -39,6 +41,24 @@ bool UMainMenu::Initialize()
 	return true;
 }
 
+void UMainMenu::SetServerList(const TArray<FString> ServerNames)
+{
+	UWorld* World = this->GetWorld();
+	if (!ensure(World != nullptr)) return;
+
+	if (!ensure(ServerList != nullptr)) return;
+	ServerList->ClearChildren();
+
+	for (const FString ServerName : ServerNames)
+	{
+		UServerRow* Row = CreateWidget<UServerRow>(World, ServerRowClass);
+		if (!ensure(Row != nullptr)) return;
+
+		Row->ServerName->SetText(FText::FromString(ServerName));
+		ServerList->AddChild(Row);
+	}
+}
+
 void UMainMenu::HostServer()
 {
 	if (MenuInterface != nullptr)
@@ -51,12 +71,7 @@ void UMainMenu::JoinServer()
 {
 	if (MenuInterface != nullptr)
 	{
-		UWorld* World = this->GetWorld();
-		UServerRow* Row = CreateWidget<UServerRow>(World, ServerRowClass);
-		if (!ensure(Row != nullptr)) return;
-
-		if (!ensure(ServerList != nullptr)) return;
-		ServerList->AddChild(Row);
+		MenuInterface->Join("");
 	}
 }
 
@@ -66,6 +81,11 @@ void UMainMenu::OpenJoinMenu()
 	if (!ensure(JoinMenu != nullptr)) return;
 
 	MenuSwitcher->SetActiveWidget(JoinMenu);
+
+	if (MenuInterface != nullptr)
+	{
+		MenuInterface->RefreshServerList();
+	}
 }
 
 void UMainMenu::OpenMainMenu()

@@ -26,15 +26,16 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 		void InGameLoadMenu();
-		
+
 	UFUNCTION(Exec)
 		void Host() override;
 
 	UFUNCTION(Exec)
 		void Join(const FString& Address) override;
 
-	UFUNCTION()
-		void LoadMainMenu() override;
+	void LoadMainMenu() override;
+	
+	void RefreshServerList() override;
 
 private:
 	TSubclassOf<class UUserWidget> MenuClass;

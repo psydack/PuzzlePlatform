@@ -21,6 +21,7 @@ public:
 
 	bool Initialize() override;
 
+	void SetServerList(const TArray<FString> ServerNames);
 
 private:
 	TSubclassOf<class UUserWidget> ServerRowClass;
