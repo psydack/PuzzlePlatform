@@ -23,6 +23,8 @@ public:
 
 	void SetServerList(const TArray<FString> ServerNames);
 
+	void SelectIndex(uint32 Index);
+
 private:
 	TSubclassOf<class UUserWidget> ServerRowClass;
 
@@ -67,4 +69,8 @@ private:
 
 	UFUNCTION()
 		void QuitGame();
+
+	TOptional<uint32> SelectedIndex;
+
+	void UpdateChildren();
 };

@@ -49,10 +49,13 @@ void UMainMenu::SetServerList(const TArray<FString> ServerNames)
 	if (!ensure(ServerList != nullptr)) return;
 	ServerList->ClearChildren();
 
+	uint32 i = 0;
 	for (const FString ServerName : ServerNames)
 	{
 		UServerRow* Row = CreateWidget<UServerRow>(World, ServerRowClass);
 		if (!ensure(Row != nullptr)) return;
+
+		Row->Setup(this, i++);
 
 		Row->ServerName->SetText(FText::FromString(ServerName));
 		ServerList->AddChild(Row);
@@ -67,11 +70,36 @@ void UMainMenu::HostServer()
 	}
 }
 
+void UMainMenu::SelectIndex(uint32 Index)
+{
+	UE_LOG(LogTemp, Warning, TEXT("My selected index %d"), Index);
+	SelectedIndex = Index;
+
+	UpdateChildren();
+}
+
+void UMainMenu::UpdateChildren()
+{
+	for (int32 i = 0; i < ServerList->GetChildrenCount(); i++)
+	{
+		auto Row = Cast<UServerRow>(ServerList->GetChildAt(i));
+		if (Row != nullptr)
+		{
+			Row->bSelected = SelectedIndex.IsSet() && i == SelectedIndex.GetValue();
+		}
+	}
+}
+
 void UMainMenu::JoinServer()
 {
-	if (MenuInterface != nullptr)
+	if (SelectedIndex.IsSet() && MenuInterface != nullptr)
 	{
-		MenuInterface->Join("");
+		UE_LOG(LogTemp, Warning, TEXT("SElected Index %d"), );
+		MenuInterface->Join(SelectedIndex.GetValue());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("NOP"));
 	}
 }
 
